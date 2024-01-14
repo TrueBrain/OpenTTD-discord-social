@@ -22,7 +22,7 @@ string(REGEX REPLACE "([^;]+)" "/Contents/Resources/\\1.dylib" LIBRARIES "${LIBR
 set(CPACK_BUNDLE_APPLE_CODESIGN_FILES "/Contents/Resources/lib${PROJECT_NAME}.dylib;${LIBRARIES}")
 set(CPACK_BUNDLE_APPLE_CODESIGN_PARAMETER "--deep -f --options runtime")
 
-# Copy "Install.txt" to the bundle root.
+# Copy "Install" script to the bundle root.
 install(
     CODE
     "
