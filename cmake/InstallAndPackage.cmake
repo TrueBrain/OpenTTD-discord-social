@@ -53,3 +53,26 @@ else()
 endif()
 
 include(CPack)
+
+# List all the dependencies of this library.
+get_target_property(LIBRARIES ${PROJECT_NAME} LINK_LIBRARIES)
+if(APPLE)
+    string(REGEX REPLACE "([^;]+)" "lib\\1.dylib" LIBRARIES "${LIBRARIES}")
+elseif(WIN32)
+    string(REGEX REPLACE "([^;]+)" "\\1.dll" LIBRARIES "${LIBRARIES}")
+else()
+    string(REGEX REPLACE "([^;]+)" "lib\\1.so" LIBRARIES "${LIBRARIES}")
+endif()
+
+install(
+    CODE
+    "
+    message(STATUS \"Creating signature file for libraries: $<TARGET_FILE_NAME:${PROJECT_NAME}> ${LIBRARIES}\")
+    execute_process(
+        COMMAND python ${CMAKE_SOURCE_DIR}/cmake/create_signature_file.py $<TARGET_FILE_NAME:${PROJECT_NAME}> ${LIBRARIES}
+        WORKING_DIRECTORY ${CMAKE_INSTALL_PREFIX}
+        OUTPUT_FILE ${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${PROJECT_NAME}>.sig
+    )
+    "
+    DESTINATION .
+    COMPONENT Runtime)

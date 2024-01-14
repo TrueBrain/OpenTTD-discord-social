@@ -43,6 +43,10 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
+        echo "::group::Install python dependencies"
+        python3 -m pip install cryptography
+        echo "::endgroup::"
+
         echo "::group::Install breakpad dependencies"
         cargo install dump_syms
         echo "::endgroup::"
@@ -109,7 +113,7 @@ jobs:
       run: |
         cd ${GITHUB_WORKSPACE}/build
         echo "::group::Run CPack"
-        cpack
+        OPENTTD_PLUGIN_PRIVATE_KEY=${{ secrets.OPENTTD_PLUGIN_PRIVATE_KEY }} cpack
         echo "::endgroup::"
 
         echo "::group::Move PDB and dll to symbols"
