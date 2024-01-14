@@ -47,9 +47,22 @@ elseif(WIN32)
 elseif(UNIX)
     set(CPACK_GENERATOR "TXZ")
 
-    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-#CPACK_PACKAGE_VERSION#-linux-${CPACK_SYSTEM_NAME}")
+    set(CPACK_PACKAGE_FILE_NAME "${PROJECT_NAME}-#CPACK_PACKAGE_VERSION#-linux-generic-${CPACK_SYSTEM_NAME}")
 else()
     message(FATAL_ERROR "Unknown OS found for packaging; please consider creating a Pull Request to add support for this OS.")
 endif()
+
+install(CODE
+    "
+        message(STATUS \"Creating signature file $<TARGET_FILE_NAME:${PROJECT_NAME}>.sig\")
+        execute_process(
+            COMMAND python3 \"${CMAKE_SOURCE_DIR}/cmake/create_signature_file.py\" \"$<TARGET_FILE:${PROJECT_NAME}>\" \"${LIBRARY_DEPENDENCY}\"
+            OUTPUT_FILE \"${CMAKE_BINARY_DIR}/$<TARGET_FILE_NAME:${PROJECT_NAME}>.sig\"
+        )
+    "
+    DESTINATION .
+    COMPONENT Runtime
+)
+install(FILES $<TARGET_FILE_NAME:${PROJECT_NAME}>.sig DESTINATION .)
 
 include(CPack)
