@@ -43,6 +43,10 @@ jobs:
     - name: Install dependencies
       shell: bash
       run: |
+        echo "::group::Install python dependencies"
+        pip install cryptography
+        echo "::endgroup::"
+
         echo "::group::Install breakpad dependencies"
         cargo install dump_syms
         echo "::endgroup::"

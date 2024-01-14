@@ -12,7 +12,7 @@ jobs:
   macos:
     name: MacOS
 
-    runs-on: macos-12
+    runs-on: macos-latest
     env:
       MACOSX_DEPLOYMENT_TARGET: 11.0
 
@@ -34,6 +34,10 @@ jobs:
 
     - name: Install dependencies
       run: |
+        echo "::group::Install python dependencies"
+        pip install cryptography
+        echo "::endgroup::"
+
         echo "::group::Install breakpad dependencies"
         cargo install dump_syms
         echo "::endgroup::"
