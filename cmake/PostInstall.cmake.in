@@ -20,6 +20,12 @@ message(STATUS "Creating signature file ${MAIN_LIBRARY_NAME}.sig for the followi
 foreach(LIBRARY ${LIBRARIES})
     get_filename_component(LIBRARY_NAME "${LIBRARY}" NAME)
     message(STATUS "- ${LIBRARY_NAME}")
+
+    if (APPLE)
+        execute_process(
+            COMMAND codesign --deep -f --options runtime -s "$ENV{APPLE_DEVELOPER_CERTIFICATE_ID}" -i org.openttd.${CPACK_PACKAGE_NAME} ${LIBRARY}
+        )
+    endif()
 endforeach()
 
 execute_process(
