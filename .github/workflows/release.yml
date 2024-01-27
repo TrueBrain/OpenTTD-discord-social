@@ -17,14 +17,14 @@ jobs:
     uses: ./.github/workflows/release-source.yml
     secrets: inherit
 
-  linux:
-    name: Linux (Generic)
-    needs: source
+  # linux:
+  #   name: Linux (Generic)
+  #   needs: source
 
-    uses: ./.github/workflows/release-linux.yml
-    secrets: inherit
-    with:
-      discord_game_sdk_version: 3.2.1
+  #   uses: ./.github/workflows/release-linux.yml
+  #   secrets: inherit
+  #   with:
+  #     discord_game_sdk_version: 3.2.1
 
   macos:
     name: MacOS
@@ -35,38 +35,38 @@ jobs:
     with:
       discord_game_sdk_version: 3.2.1
 
-  windows:
-    name: Windows
-    needs: source
+  # windows:
+  #   name: Windows
+  #   needs: source
 
-    uses: ./.github/workflows/release-windows.yml
-    secrets: inherit
-    with:
-      discord_game_sdk_version: 3.2.1
+  #   uses: ./.github/workflows/release-windows.yml
+  #   secrets: inherit
+  #   with:
+  #     discord_game_sdk_version: 3.2.1
 
-  upload-cdn:
-    name: Upload (CDN)
-    needs:
-    - source
-    - linux
-    - macos
-    - windows
+  # upload-cdn:
+  #   name: Upload (CDN)
+  #   needs:
+  #   - source
+  #   - linux
+  #   - macos
+  #   - windows
 
-    if: github.event_name == 'release'
+  #   if: github.event_name == 'release'
 
-    uses: ./.github/workflows/upload-cdn.yml
-    secrets: inherit
+  #   uses: ./.github/workflows/upload-cdn.yml
+  #   secrets: inherit
 
-    with:
-      version: ${{ needs.source.outputs.version }}
+  #   with:
+  #     version: ${{ needs.source.outputs.version }}
 
   upload-github:
     name: Upload (GitHub)
     needs:
     - source
-    - linux
+    # - linux
     - macos
-    - windows
+    # - windows
 
     if: github.event_name == 'release'
 

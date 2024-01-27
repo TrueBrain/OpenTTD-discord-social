@@ -38,9 +38,9 @@ jobs:
         python3 -m pip install cryptography
         echo "::endgroup::"
 
-        echo "::group::Install breakpad dependencies"
-        cargo install dump_syms
-        echo "::endgroup::"
+        # echo "::group::Install breakpad dependencies"
+        # cargo install dump_syms
+        # echo "::endgroup::"
 
     - name: Install Discord SDK
       shell: bash
@@ -98,17 +98,17 @@ jobs:
         cmake --build . -j $(sysctl -n hw.logicalcpu)
         echo "::endgroup::"
 
-    - name: Create breakpad symbols
-      run: |
-        cd build-x64
-        mkdir dSYM
-        dsymutil ./libdiscord-social.dylib -o dSYM/libdiscord-social.dylib
-        dump_syms ./dSYM/libdiscord-social.dylib --inlines --store symbols
+    # - name: Create breakpad symbols
+    #   run: |
+    #     cd build-x64
+    #     mkdir dSYM
+    #     dsymutil ./libdiscord-social.dylib -o dSYM/libdiscord-social.dylib
+    #     dump_syms ./dSYM/libdiscord-social.dylib --inlines --store symbols
 
-        cd ../build-arm64
-        mkdir dSYM
-        dsymutil ./libdiscord-social.dylib -o dSYM/libdiscord-social.dylib
-        dump_syms ./dSYM/libdiscord-social.dylib --inlines --store ../build-x64/symbols
+    #     cd ../build-arm64
+    #     mkdir dSYM
+    #     dsymutil ./libdiscord-social.dylib -o dSYM/libdiscord-social.dylib
+    #     dump_syms ./dSYM/libdiscord-social.dylib --inlines --store ../build-x64/symbols
 
     - name: Create bundles
       run: |
@@ -130,16 +130,12 @@ jobs:
         lipo -create -output ${GITHUB_WORKSPACE}/lib/x86_64/libdiscord_game_sdk.dylib ../build-*/install/discord_game_sdk.dylib
         echo "::endgroup::"
 
-        echo "::group::Sign binaries"
-        codesign --deep -f --options runtime -s "${{ secrets.APPLE_DEVELOPER_CERTIFICATE_ID }}" -i org.openttd.discord-social libdiscord-social.dylib
-        codesign --deep -f --options runtime -s "${{ secrets.APPLE_DEVELOPER_CERTIFICATE_ID }}" -i org.openttd.discord-social ${GITHUB_WORKSPACE}/lib/x86_64/libdiscord_game_sdk.dylib
-        echo "::endgroup::"
-
         echo "::group::Run CPack"
         cpack
         echo "::endgroup::"
       env:
         OPENTTD_PLUGIN_PRIVATE_KEY: ${{ secrets.OPENTTD_PLUGIN_PRIVATE_KEY }}
+        APPLE_DEVELOPER_CERTIFICATE_ID: ${{ secrets.APPLE_DEVELOPER_CERTIFICATE_ID }}
 
     - name: Notarize
       env:
